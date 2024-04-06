@@ -21,7 +21,7 @@ class Replacer
             return self::nullVal();
         }
 
-        return (string)$value;
+        return (string)(int)$value;
     }
 
     private static function floatVal(mixed $value): string
@@ -30,7 +30,7 @@ class Replacer
             return self::nullVal();
         }
 
-        return (string)$value;
+        return (string)(float)$value;
     }
 
     private static function stringVal(string $value): string

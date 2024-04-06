@@ -12,7 +12,7 @@ class Parser
         $argNumber = 0;
 
         $callback = static function (array $matches) use (&$argNumber, $args, $skipValue): string {
-            if (!isset($args[$argNumber])) {
+            if (!array_key_exists($argNumber, $args)) {
                 throw new \Exception('Args array too small');
             }
 
