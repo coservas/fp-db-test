@@ -7,26 +7,34 @@ class Parser
     private const string SPECIFIER_PATTERN = '(\?(?<specifier>a|f|d|#)?)';
     private const string SKIP_BLOCK_PATTERN = '(?<skip>\{.*\})';
 
-    public static function parse(string $query, array $args, int $skipValue): ?string
+    public static function parse(string $query, array $args, string $skipValue): ?string
     {
         $argNumber = 0;
 
         $callback = static function (array $matches) use (&$argNumber, $args, $skipValue): string {
             if (!array_key_exists($argNumber, $args)) {
-                throw new \Exception('Args array too small');
+                throw new \Exception('Args is too few');
             }
 
             if ($skipBlock = $matches['skip'] ?? null) {
-                if ($args[$argNumber] === $skipValue) {
+                $value = $args[$argNumber];
+                if ($value === $skipValue) {
                     $argNumber++;
                     return '';
                 }
 
-                return self::parse(
+                $result = self::parse(
                     mb_substr($skipBlock, 1, strlen($skipBlock) - 2),
-                    [$args[$argNumber++]],
+                    [$value],
                     $skipValue
                 );
+
+                if ($result === '') {
+                    throw new \Exception('SkipBlock is not have question symbol');
+                }
+
+                $argNumber++;
+                return $result;
             }
 
             return Replacer::replace($matches['specifier'] ?? '', $args[$argNumber++]);

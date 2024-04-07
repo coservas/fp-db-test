@@ -4,11 +4,11 @@ namespace FpDbTest;
 
 class Database implements DatabaseInterface
 {
-    private int $skipValue;
+    private string $skipValue;
 
     public function __construct(private readonly ?\mysqli $mysqli = null)
     {
-        $this->skipValue = time();
+        $this->skipValue = microtime();
     }
 
     public function buildQuery(string $query, array $args = []): string
@@ -16,7 +16,7 @@ class Database implements DatabaseInterface
         return Parser::parse($query, $args, $this->skipValue);
     }
 
-    public function skip(): int
+    public function skip(): string
     {
         return $this->skipValue;
     }
