@@ -21,7 +21,11 @@ class Replacer
             return self::nullVal();
         }
 
-        return (string)(int)$value;
+        if (is_int($value) || is_bool($value)) {
+            return (string)(int)$value;
+        }
+
+        throw new \Exception('Bad value type');
     }
 
     private static function floatVal(mixed $value): string
@@ -30,12 +34,11 @@ class Replacer
             return self::nullVal();
         }
 
-        return (string)(float)$value;
-    }
+        if (is_float($value)) {
+            return (string)$value;
+        }
 
-    private static function stringVal(string $value): string
-    {
-        return "'$value'";
+        throw new \Exception('Bad value type');
     }
 
     private static function idVal(mixed $values): string
@@ -44,13 +47,20 @@ class Replacer
             return '`' . implode('`, `', $values) . '`';
         }
 
-        return "`$values`";
+        if (is_string($values)) {
+            return "`$values`";
+        }
+
+        throw new \Exception('Bad value type');
     }
 
-    private static function arrayVal(array $values): string
+    private static function arrayVal(mixed $values): string
     {
-        $result = [];
+        if (!is_array($values)) {
+            throw new \Exception('Bad value type');
+        }
 
+        $result = [];
         foreach ($values as $key => $value) {
             $value = self::val($value);
 
@@ -81,7 +91,7 @@ class Replacer
         }
 
         if (is_int($value) || is_bool($value)) {
-            return self::intVal($value);
+            return self::intVal((int)$value);
         }
 
         if (is_float($value)) {
@@ -89,5 +99,10 @@ class Replacer
         }
 
         throw new \Exception('Bad value type');
+    }
+
+    private static function stringVal(string $value): string
+    {
+        return "'$value'";
     }
 }
