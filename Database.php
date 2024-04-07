@@ -6,7 +6,7 @@ class Database implements DatabaseInterface
 {
     private int $skipValue;
 
-    public function __construct()
+    public function __construct(private readonly ?\mysqli $mysqli = null)
     {
         $this->skipValue = time();
     }
